@@ -42,4 +42,9 @@ casos_ <-
 fallecidos <- rast("/vsicurl/https://marcelocubero.github.io/capas_proyecto/fallecidos.tif")
 ```
 
-#
+#Tabla
+
+```{r Tabla}
+
+```
+
