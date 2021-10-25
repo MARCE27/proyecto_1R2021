@@ -45,6 +45,11 @@ fallecidos <- rast("/vsicurl/https://marcelocubero.github.io/capas_proyecto/fall
 #Tabla
 
 ```{r Tabla}
-
+casos_ %>%
+  select(Cantón= canton,Provincia= provincia, Casos_Activos= activos, Casos_Positivos= positivos) %>%
+datatable( casos_, options = list(
+  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'),
+  pageLength = 5
+))
 ```
 
