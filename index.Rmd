@@ -1,5 +1,6 @@
 ---
-title: "Proyecto 1 (Marcelo Cubero, Johan Cordoba y Marco Arce)"
+title: "Costa Rica; casos de covid-19 para el viernes 22 de octubre del 2021.
+Proyecto 1 (Marcelo Cubero, Johan Cordoba y Marco Arce)"
 output: html_document
 ---
 
@@ -24,7 +25,7 @@ library(leaflet)
 ```
 
 # Carga de Datos
-```{r Datos}
+```{r Datos,warning=FALSE, message=FALSE}
 casos <-
   st_read(
     "/vsicurl/https://marcelocubero.github.io/capas_proyecto/casos.geojson",
@@ -42,14 +43,89 @@ casos_ <-
 fallecidos <- rast("/vsicurl/https://marcelocubero.github.io/capas_proyecto/fallecidos.tif")
 ```
 
-#Tabla
+#Mapa y cuadro de datos
+=====================================
+
+Row {data-height=650}
+-----------------------------------------------------------------------
+
+### Mapa de casos de covid-19 en Costa Rica, para el viernes 22 de octubre del 2021
+
+```{r Mapa y Cuadro de datos}
+fallecidos_rl <- raster::raster(fallecidos)
+bins <- c(10, 100, 500, 1000, 4000, 7600)
+pal <- colorBin("YlOrBr", domain = casos$activos, bins = bins)
+bins3 <- c(1, 5000, 10000, 20000, 40000, 52000)
+pal3 <- colorBin("Reds", domain = casos$positivos, bins = bins3)
+at <- seq(1:800)
+pal2 <- colorBin('Accent', domain = at , na.color = "transparent")
+
+
+leaflet() %>%
+  addTiles(group = "OSM") %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap , group = "NatGeo") %>%
+  addProviderTiles(providers$CartoDB.DarkMatter, group = "CartoDB-Black") %>%
+  addRasterImage(fallecidos_rl,
+                 opacity = 1,
+                 group = "Fallecidos",
+                 colors = pal2) %>%
+  addLegend("bottomleft",
+            pal = pal2,
+            values = at,
+            title = "Fallecidos") %>%
+  addPolygons(
+    data = casos,
+    color = "black",
+    fillColor = ~ pal(activos),
+    fillOpacity = 1,
+    weight = 1,
+    opacity = 1,
+    stroke = TRUE,
+    group = "Casos Activos", 
+    popup = paste0("<b>Cantón: </b>", casos$canton, "<br>", "<b>Casos activos: </b>", casos$activos) 
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = casos$activos,
+    opacity = 1,
+    title = "Casos Activos"
+  ) %>%
+  addPolygons(
+    data = casos,
+    color = "black",
+    fillColor = ~ pal3(positivos),
+    fillOpacity = 1,
+    weight = 1,
+    opacity = 1,
+    stroke = TRUE,
+    group = "Casos Positivos", 
+    popup = paste0("<b>Cantón: </b>", casos$canton, "<br>", "<b>Casos positivos: </b>", casos$positivos )
+  ) %>%
+  addLegend(
+    pal = pal3,
+    values = casos$activos,
+    opacity = 1,
+    title = "Casos Positivos"
+  ) %>%
+  addLayersControl(
+    "bottomleft",
+    baseGroups = c("OSM", "NatGeo", "CartoDB-Black"),
+    overlayGroups = c("Fallecidos", "Casos Activos", "Casos Positivos" ),
+    options = layersControlOptions(collapsed = TRUE)
+  ) %>%
+  addScaleBar("bottomright")
+```
+
+Row {data-height=350}
+-------------------------------------
+### Casos activos y positivos por cantón y provincia
 
 ```{r Tabla}
 casos_ %>%
   select(Cantón= canton,Provincia= provincia, Casos_Activos= activos, Casos_Positivos= positivos) %>%
 datatable( casos_, options = list(
   language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'),
-  pageLength = 5
+  pageLength = 15
 ))
 ```
 
