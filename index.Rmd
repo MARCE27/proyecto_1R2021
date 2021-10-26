@@ -52,7 +52,7 @@ Row {data-height=650}
 ### Mapa de casos de covid-19 en Costa Rica, para el viernes 22 de octubre del 2021
 
 ```{r Mapa y Cuadro de datos}
-fallecidos_rl <- raster::raster(fallecidos)
+fallecidos_lr <- raster::raster(fallecidos)
 bins <- c(10, 100, 500, 1000, 4000, 7600)
 pal <- colorBin("YlOrBr", domain = casos$activos, bins = bins)
 bins3 <- c(1, 5000, 10000, 20000, 40000, 52000)
@@ -129,3 +129,43 @@ datatable( casos_, options = list(
 ))
 ```
 
+
+Casos positivos por cantón {data-orientation=rows}
+===================================== 
+Row {data-height=650}
+-----------------------------------------------------------------------
+
+### Casos positivos por cantón
+```{r}
+ggplot(casos_, aes(x= canton, y= positivos)) +
+  geom_col( width = 0.5, fill= "Red") +
+  ggtitle("Casos Positivos por cantón") +
+  xlab("Cantón") +
+  ylab("Cantidad de casos positivos") +
+   theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    text = element_text(size=8),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+  ) 
+```
+
+Casos activos por cantón {data-orientation=rows}
+===================================== 
+Row {data-height=650}
+-----------------------------------------------------------------------
+### Casos activos por cantón
+
+```{r}
+
+
+ggplot(casos_, aes(x= canton, y= activos)) +
+  geom_col( width = 0.5, fill= "Brown") +
+  ggtitle("Casos Activos por cantón") +
+  xlab("Cantón") +
+  ylab("Cantidad de casos activos") +
+   theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    text = element_text(size=8),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+  )
+```
